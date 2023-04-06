@@ -1,0 +1,88 @@
+CalculationMode = td
+
+Dimensions = 2
+
+FromScratch = YES
+
+ExperimentalFeatures = YES
+
+#############################
+# GS
+#############################
+
+%Coordinates
+"H1D" | 0.0 | 0.0
+%
+
+%Species
+'H1D' | species_user_defined | potential_formula | '-1.0/(abs(x)+0.002)' | valence | 1
+%
+
+%UserDefinedStates
+  1 | 1 | 1 | formula | "sqrt(2)*x*exp(-abs(x))" | normalize_no
+%
+
+OnlyUserDefinedInitialStates = YES
+
+BoxShape = sphere
+Radius = 10 
+Spacing = 0.2
+
+TheoryLevel = independent_particles
+
+
+#############################
+# TD
+#############################
+amplitude = 4700*eV
+omega = 0.057
+UnitsOutput = eV_Angstrom
+tc = 2*pi/omega
+nc_c = 8
+nc_u = 1
+nc = nc_c + 2 * nc_u
+dt = 0.05
+Tf = nc*tc
+
+TDTimeStep = dt
+TDPropagationTime = Tf
+TDPropagator = crank_nicolson
+
+#############################
+# PES
+#############################
+PhotoElectronSpectrum = pes_mask
+
+%PESMaskSize
+  6 | Radius
+%
+
+PESMaskSpectEnergyMax = 60*eV
+PESMaskSpectEnergyStep = 0.05*eV
+PESMaskMode = fullmask_mode
+PESMaskPlaneWaveProjection = fft_map
+PESMaskEnlargeFactor = 8.0
+
+
+##########################
+#LASER
+##########################
+
+
+
+%TDExternalFields
+  vector_potential | 1 | 0 | 0 | omega | "ramp"
+%
+
+%TDFunctions
+ "ramp" | tdf_trapezoidal | amplitude | nc_c*tc | nc/2*tc | nc_u*tc
+%
+
+%Output
+      PES | matlab
+      PES_density | matlab
+%
+
+
+
+
