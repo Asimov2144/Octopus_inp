@@ -1,0 +1,69 @@
+CalculationMode = td
+
+FromScratch = NO
+ExperimentalFeatures = YES
+
+#############################
+# GS
+#############################
+%Coordinates
+"H" | 0.0 | 0.0 | 0.0
+%
+
+BoxShape = sphere
+Radius = 60
+Spacing = 1.5
+UnitsOutput = eV_Angstrom
+TheoryLevel = independent_particles
+
+
+#############################
+# PES
+#############################
+PhotoElectronSpectrum = pes_mask
+
+%PESMaskSize
+  50 | Radius
+%
+
+PESMaskMode = fullmask_mode
+PESMaskPlaneWaveProjection = pnfft_map
+#PESMaskSpectEnergyMax = 60*eV
+#PESMaskSpectEnergyStep = 0.05*eV
+PESMaskEnlargeFactor = 4.5
+##########################
+#LASER
+##########################
+amplitude = 4690*eV/angstrom
+omega = 0.057
+tc = 2*pi/omega
+nc_c = 8
+nc_u = 1
+nc = nc_c + 2 * nc_u
+OutputInterval = 150
+%TDExternalFields
+  vector_potential | 1 | 0 | 0 | omega | "ramp"
+%
+
+%TDFunctions
+ "ramp" | tdf_from_expr | "-amplitude*sin(omega*t/(2*nc))^2"
+%
+
+#############################
+# TD
+#############################
+dt = 0.08
+Tf = nc*tc
+
+TDTimeStep = dt
+TDPropagationTime = Tf
+TDPropagator = crank_nicolson
+
+%PhotoelectronSpectrumOutput
+  energy_tot | matlab
+  velocity_map_cut | matlab
+%
+FilterPotentials = filter_none
+
+
+
